@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SQL</title>
+  <style type="text/css">
+    body{
+      padding: 20px 40px;
+    }
+    p{
+      font-size: 20px;
+      margin-top: 15px;
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h2>
+    1. Seleziona tutti gli ospiti che sono stati identificati con la carta d'identità.
+  </h2>
+  <p>
+    SELECT `document_type`<br> <!-- Bruttissima soluzione -->
+    FROM `ospiti`<br>
+    WHERE `document_type` = 'ci';
+  </p>
+  <h2>
+    2. Seleziona tutti gli ospiti che sono nati dopo il 1988.
+  </h2>
+  <p>
+    SELECT `date_of_birth`<br>
+    FROM `ospiti`<br>
+    WHERE `date_of_birth` > '1988-01-01';
+  </p>
+  <h2>
+    3. Seleziona tutti gli ospiti che hanno più di 20 anni al momento dell'esecuzione della query.
+  </h2>
+  <p>
+    SELECT `date_of_birth`<br>
+    FROM `ospiti`<br>
+    WHERE DATEDIFF(CURRENT_DATE(), `date_of_birth`) > 7305;
+  </p>
+  <h2>
+    4. Seleziona tutti gli ospiti il cui nome inizia con la D.
+  </h2>
+  <p>
+    SELECT `name`<br>
+    FROM `ospiti`<br>
+    WHERE `name` LIKE 'd%';
+  </p>
+  <h2>
+    5. Calcolare il totale degli ospiti paganti.
+  </h2>
+  <p>
+    SELECT COUNT(id)<br>
+    FROM `paganti`;
+  </p>
+  <h2>
+    6. Qual è il prezzo massimo pagato?
+  </h2>
+  <p>
+    SELECT MAX(price)<br>
+    FROM `pagamenti`;
+  </p>
+  <h2>
+    7. Seleziona gli ospiti riconosciuti con patente e nati nel 1975.
+  </h2>
+  <p>
+    SELECT `name`<br>
+    FROM `ospiti`<br>
+    WHERE YEAR(`date_of_birth`) = 1975<br>
+    AND `document_type` > 'driver licence';
+  </p>
+  <h2>
+    8. Quanti posti letto ha l'hotel in totale?
+  </h2>
+  <p>
+    SELECT SUM(beds)<br>
+    FROM `stanze`;
+  </p>
+</body>
+</html>
