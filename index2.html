@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SQL - 2</title>
+  <style type="text/css">
+    body{
+      padding: 20px 40px;
+    }
+    p{
+      font-size: 20px;
+      margin-top: 15px;
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>
+    Esercizi
+  </h1>
+  <h2>
+    1. Conta gli ospiti raggruppandoli per anno dinascita.
+  </h2>
+  <p>
+    SELECT COUNT(`ospiti`.`id`) AS `Totale`, YEAR(`ospiti`.`date_of_birth`) AS `Anno_di_nascita`<br> <!-- Bruttissima soluzione -->
+    FROM `ospiti`<br>
+    GROUP BY YEAR(`ospiti`.`date_of_birth`);
+  </p>
+  <h2>
+    2. Somma i prezzi dei pagamenti raggruppandoli per status.
+  </h2>
+  <p>
+    SELECT SUM(`pagamenti`.`price`) AS `Totale`, `pagamenti`.`status` AS `Stato_pagamento`<br>
+    FROM `pagamenti`<br>
+    GROUP BY `pagamenti`.`status`;
+  </p>
+  <h2>
+    3. Conta quante volte è stata prenotata ogni stanza.
+  </h2>
+  <p>
+    SELECT `stanze`.`room_number`, COUNT(`prenotazioni`.`id`) AS `#_prenotazioni`<br>
+    FROM `stanze`<br>
+    INNER JOIN `prenotazioni`<br>
+    ON `stanze`.`id` = `prenotazioni`.`stanza_id`<br>
+    GROUP BY `stanze`.`room_number`;
+  </p>
+  <h2>
+    4. Fai un’analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti.
+  </h2>
+  <p>
+    SELECT HOUR(`created_at`) AS `Ora_prenotazione`, COUNT(`id`) AS `Conteggio_prenotazioni`<br>
+    FROM `prenotazioni`<br>
+    GROUP BY HOUR(`created_at`);
+  </p>
+  <h2>
+    5. Stampare tutti gli ospiti per ogni prenotazione.
+  </h2>
+  <p>
+    SELECT `prenotazioni`.`id` AS `Prenotazioni_id`, `ospiti`.`name` AS `Name`, `ospiti`.`lastname` AS `Surname`<br>
+    FROM `prenotazioni`<br>
+    LEFT JOIN `prenotazioni_has_ospiti`<br>
+    ON `prenotazioni`.`id` = `prenotazioni_has_ospiti`.`prenotazione_id`<br>
+    LEFT JOIN `ospiti`<br>
+    ON `prenotazioni_has_ospiti`.`ospite_id` = `ospiti`.`id`  ;
+  </p>
+  <h2>
+    6. Stampare Nome, Cognome, Prezzo del Pagante per tutte le prenotazioni fatte a Maggio 2018.
+  </h2>
+  <p>
+    SELECT `ospiti`.`name`, `ospiti`.`lastname`, `pagamenti`.`price`, `prenotazioni`.`created_at`<br>
+    FROM `prenotazioni`<br>
+    INNER JOIN `prenotazioni_has_ospiti`<br>
+    ON `prenotazioni`.`id` = `prenotazioni_has_ospiti`.`prenotazione_id`<br>
+    INNER JOIN `ospiti`<br>
+    ON `prenotazioni_has_ospiti`.`ospite_id` = `ospiti`.`id`<br>
+    INNER JOIN `paganti`<br>
+    ON `paganti`.`ospite_id` = `ospiti`.`id`<br>
+    INNER JOIN `pagamenti`<br>
+    ON `pagamenti`.`pagante_id` = `paganti`.`id`<br>
+    WHERE MONTH(`prenotazioni`.`created_at`) = 05<br>
+    AND YEAR(`prenotazioni`.`created_at`) = 2018;
+  </p>
+  <h2>
+    7. Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano.
+  </h2>
+  <p>
+    SELECT SUM(`pagamenti`.`price`) AS `Prezzo_tot_1°_piano`<br>
+    FROM `stanze`<br>
+    INNER JOIN `prenotazioni`<br>
+    ON `prenotazioni`.`stanza_id` = `stanze`.`id`<br>
+    INNER JOIN `pagamenti`<br>
+    ON `prenotazioni`.`id` = `pagamenti`.`prenotazione_id`<br>
+    WHERE `stanze`.`floor` = 1;
+  </p>
+  <h2>
+    8. Prendi i dati di fatturazione per la prenotazione con id=7.
+  </h2>
+  <p>
+    SELECT `paganti`.`name`, `paganti`.`lastname`, `paganti`.`address`, `pagamenti`.`status`, `pagamenti`.`price`<br>
+    FROM `paganti`<br>
+    INNER JOIN `pagamenti`<br>
+    ON `paganti`.`id` = `pagamenti`.`pagante_id`<br>
+    INNER JOIN `prenotazioni`<br>
+    ON `prenotazioni`.`id` = `pagamenti`.`prenotazione_id`<br>
+    WHERE `prenotazioni`.`id` = 7;
+  </p>
+  <h1>
+    Bonus
+  </h1>
+  <h2>
+    1. Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
+  </h2>
+  <p>
+    SELECT `ospiti`.`name` AS `Name`, `ospiti`.`lastname` AS `Surname`<br>
+    FROM `ospiti`<br>
+    INNER JOIN `prenotazioni_has_ospiti`<br>
+    ON `prenotazioni_has_ospiti`.`ospite_id` = `ospiti`.`id`<br>
+    INNER JOIN `prenotazioni`<br>
+    ON `prenotazioni`.`id` = `prenotazioni_has_ospiti`.`prenotazione_id`<br>
+    GROUP BY (`ospiti`.`id`)<br>
+    HAVING COUNT(`ospiti`.`id`) > 2;
+  </p>
+  <h2>
+    2. Le stanze sono state tutte prenotate almeno una volta?
+  </h2>
+  <p>
+    SELECT `stanze`.`room_number`<br>
+    FROM `stanze`<br>
+    LEFT JOIN `prenotazioni`<br>
+    ON `prenotazioni`.`stanza_id` = `stanze`.`id`<br>
+    WHERE `prenotazioni`.`stanza_id` IS null;
+  </p>
+</body>
+</html>
